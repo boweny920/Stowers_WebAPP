@@ -1,0 +1,55 @@
+{% extends "Bioinformatics/base_template.html" %}                          
+{% load static%}
+<script type="text/javascript"></script>
+
+{% block main %}
+
+<div class="ui container" style="text-align:left;">
+</br>
+    <div class="ui container">
+        <h2 class="ui header">Public Data Analysis with Stowers Pipelines</h2>
+    </br>
+        <p>This page allows you to have a public dataset from NCBI's SRA collection analyzed with by Stowers' own Pipelines.</p>
+    </div>
+</div>
+</br>
+<div class="ui container" style="text-align:center;">
+
+    <form action="publicdata" method="post">
+        {% csrf_token %}
+        <table id="dynamicTable">
+            <thead>
+                <tr>
+                    {% for field in form %}
+                        <th>{{ field.label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for field in form %}
+                        <td>
+                            {{ field }}  
+                        </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </br>
+        <button type="button" onclick="addRow()">Add Row</button>
+        <input type="submit" value="Submit">
+    </form>
+</br>
+
+</div>
+
+<script>
+    function addRow() {
+        const table = document.getElementById('dynamicTable').getElementsByTagName('tbody')[0];
+        const newRow = table.rows[0].cloneNode(true); // Clone the first row
+        const inputs = newRow.getElementsByTagName('input');
+        table.appendChild(newRow); // Add the cloned row to the table
+    }
+</script>
+
+{% endblock %}
