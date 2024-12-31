@@ -1,0 +1,43 @@
+html, body { weight: 100%; height: 100%; }
+img { border: 0px solid #FFF; }
+body { 
+  margin: 0; padding: 0; height:100%; 
+  font-family: Arial, Helvetica, Sans-Serif;
+  font-size: 13px; 
+}
+
+div#main { width: 99%; }
+.dataTables_info { padding-top: 0; }
+.dataTables_paginate { padding-top: 0; }
+.css_right { float: right; }
+#example_wrapper .fg-toolbar { font-size: 0.8em }
+#theme_links span { float: left; padding: 2px 10px; }
+div.action { width: 100%; padding: 5px; background-color: #EEE; margin-bottom: 5px; }
+div.action form { margin: 0; padding: 0; }
+div.action ul { list-style-type: none; margin: 0; padding: 0; }
+div.action ul li { display: inline; margin-right: 1em; }
+table.data { width: 100%; border-collapse: collapse; }
+table.data td { vertical-align: top; }
+table.data thead td {
+  background: #E6E6E6 url(jquery.ui/images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x;
+  text-align: center; font-weight: bold; margin: 0.5em auto;
+}
+div.popup {
+  font-family: Verdana, Arial, Helvetica, Sans-Serif;
+  position:absolute; height: -3px; width: -3px;
+  padding:1px; border:solid 1px black;
+  background-color:#CCCCCC; color: #333333;
+  filter: Alpha(opacity=80); -moz-opacity:0.80; opacity:0.80;
+}
+div.popup div.head {
+  padding:1px; border:1px solid #003399;
+  font-size:14px; cursor:move;
+  background-color: #CCCCFF; color:#990000;
+  text-align:right; text-decoration: none;
+}
+div.popup h2 a:link,.popup a:visited, {
+  font-size:14px; font-weight:bold; padding:0 3px
+}
+div.popup div {
+  font-size: 12px; background-color: #FFFF99; color: #000000;
+}

@@ -1,0 +1,57 @@
+{ 
+    font-family: Arial, Helvetica, Sans-Serif;
+    font-size: 13px;  margin: 0px; padding: 0px;
+    background-color: #EEEEEE;
+}
+
+
+/* Foot section */
+#foot { text-align: center; font-size: 11px; clear: both; }
+div#links { margin: 0px 0px 0px 0px; }
+div#links ul { margin: 0px; padding: 0px; list-style-type: none}
+div#copyright { color: #888888 }
+
+/* Legacy section*/
+.address {
+	font-size: 16px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+/*div.title a { text-decoration: underline; }*/
+table.data { width: 100%; font-size: 0.9em; border-collapse: collapse;}
+table.data td { vertical-align: top; }
+/*table.data a { text-decoration: underline; color: blue; }*/
+table.data thead td { 
+  /*background: #E6E6E6 url(jquery.ui/images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x; */
+  text-align: center;
+  font: Helvetica
+  font-family: Arial, Helvetica, Sans-Serif;
+}
+
+
+.clipboard-copy {
+  text-decoration: none;
+  background-color: rgba(179, 214, 110, 0.9);
+  border-radius: 2px;
+  color: black;
+  cursor: pointer;
+  padding-right: 0.3em;
+  padding-left: 0.3em;
+  font-size: 95%;
+}
+.clipboard-copy:active {
+  color: #006CA2;
+}
+.clipboard-copy:hover {
+  text-decoration: underline;
+}
+.clipboard-copy:link {
+  color: #1d1414;
+}
+.clipboard-copy:visited {
+  color: #1d1414;
+}
+
+/*.regbutton a {
+  background: none;
+}*/
