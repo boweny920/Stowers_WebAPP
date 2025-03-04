@@ -19,12 +19,35 @@ def Home(request):
 def publicdata(request):
     if request.method == "POST":
         data = request.POST # This is not validated data. The below function validates the data, but only takes the last value of each field. 
-        if len(data["SRAID"]>1):
-            validation_list =[] # a list of TRUE or Falses for data validation
-            data_dic = {}
-            i=0
-            while i < len(data["SRAID"]):
+        if len(data["SRAID"]) >1:
+            sraid_values = data.getlist("SRAID")
+            samplename_values = data.getlist("SampleName")
+            reference_values = data.getlist("Reference")
+            description_values = data.getlist("Description")
+            # Join the values into a string using "|"
+            sraid_values_concate = "|".join(sraid_values)
+            samplename_values_concate = "|".join(samplename_values)
+            reference_values_concate = reference_values[0]
+            description_values_concate = "|".join(description_values)
+            data = data.copy() #beacuse QueryDict is immutable
+            data["SRAID"] = sraid_values_concate
+            data["SampleName"] = samplename_values_concate
+            data["Reference"] = reference_values_concate
+            data["Description"] = description_values_concate
+            print(data)
+            form = PublicDataForm(data)
+            if form.is_valid():
+                sraid = form.cleaned_data["SRAID"]
+                samplename = form.cleaned_data["SampleName"]
+                reference = form.cleaned_data["Reference"]
+                description = form.cleaned_data["Description"]
+                print("TPRINT",sraid, samplename, reference, description)
 
+                # Add app processes func from utils.py
+                return render(request,"Bioinformatics/publicData_submitted.html")
+            else:
+                print(form.errors) # This will print the errors in the form
+                return render(request, "Bioinformatics/publicData_submitted_formatError.html", context={"form": form})
 
         else:
             form = PublicDataForm(request.POST)
@@ -33,10 +56,12 @@ def publicdata(request):
                 samplename = form.cleaned_data["SampleName"]
                 reference = form.cleaned_data["Reference"]
                 description = form.cleaned_data["Description"]
-                print(form.cleaned_data)
-                
+                print("TPRINT",sraid, samplename, reference, description)
+
                 # Add app processes func from utils.py
                 return render(request,"Bioinformatics/publicData_submitted.html")
+            else:
+                print(form.errors) # This will print the errors in the form
     else:
         form = PublicDataForm()
     context = {"form": form}
