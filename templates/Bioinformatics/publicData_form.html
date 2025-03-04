@@ -17,6 +17,25 @@
 
     <form action="publicdata" method="post">
         {% csrf_token %}
+        <table id="userInfo_Table">
+            <thead>
+                <tr>
+                    {% for field in userInfo %}
+                        <th>{{ field.label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for field in userInfo %}
+                        <td>
+                            {{ field }}  
+                        </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </br>
         <table id="dynamicTable">
             <thead>
                 <tr>
@@ -35,10 +54,8 @@
                 </tr>
             </tbody>
         </table>
-    </br>
-    <p style="color: blue; font-style: italic; text-align: center;"> Quick note: Please only select ONE Reference Genome per submission. Thanks :D </p>
-    </br>
-        <button type="button" onclick="addRow()">Add Row</button>
+        </br>
+        <button type="button" onclick="addRow()">Add Sample</button>
         <input type="submit" value="Submit">
     </form>
 </br>
