@@ -4,7 +4,8 @@ from django.http import HttpResponse
 from django.utils import timezone
 from .forms import PublicDataForm, User_Info_Form
 from django.http import HttpResponseRedirect
-
+from django.conf import settings
+from .utils import pubdata
 
 ### home page
 def Home(request):
@@ -50,7 +51,22 @@ def publicdata(request):
             readLength = form.cleaned_data["ReadLength"]
             description = form.cleaned_data["Description"]
 
-            # Add app processes func from utils.py
+            # Using utils to create the xlsx file
+            pubdata_obj = pubdata(
+                Lab=userInfo.cleaned_data["Lab"],
+                UserID=userInfo.cleaned_data["UserID"],
+                PROJECT_NAME=userInfo.cleaned_data["PROJECT_NAME"],
+                ReadType=userInfo.cleaned_data["ReadType"],
+                Reference=userInfo.cleaned_data["Reference"],
+                SRAID=sraid.split("|"),
+                SampleName=samplename.split("|"),
+                ReadLength=readLength.split("|"),
+                Description=description.split("|"),
+                saveDir=settings.EXCEL_DIR,
+            )
+            
+            xlsx_path = pubdata_obj.public_xlsx_maker()
+
             return render(request,"Bioinformatics/publicData_submitted.html")
         else:
             print(form.errors) # This will print the errors in the form
