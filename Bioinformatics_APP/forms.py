@@ -16,7 +16,9 @@ class PublicDataForm(forms.Form):
     SampleName = forms.CharField(max_length=2000, required=True,
                                  widget=forms.Textarea(attrs={'placeholder': 'Enter Sample Name here', 'rows': 1, 'cols': 25})
                                  )
-    
+    ReadLength = forms.IntegerField(required=True,
+                                    widget=forms.Textarea(attrs={"placeholder": "Enter Read Length", "rows": 1, "cols": 15})
+                                    )
     Description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'placeholder': 'Put a short description of your sample. Leave empty if None', 'rows': 1, 'cols': 55})
         )
@@ -33,7 +35,10 @@ class PublicDataForm(forms.Form):
         data = self.cleaned_data['SampleName']
         """Splits SampleName by '|' into a list"""
         return [item.strip() for item in data.split('|') if item.strip()]
-
+    def clean_readLength(self):
+        data = self.clean_data["ReadLength"]
+        if data == 0:
+            raise forms.ValidationError("Read length must be a positive integer")
     def clean_Description(self):
         data = self.cleaned_data['Description']
         """Splits Description by '|' into a list"""

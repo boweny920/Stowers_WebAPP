@@ -29,14 +29,17 @@ def publicdata(request):
 
         sraid_values = data.getlist("SRAID")
         samplename_values = data.getlist("SampleName")
+        read_length_values = data.getlist("ReadLength")
         description_values = data.getlist("Description")
         # Join the values into a string using "|"
         sraid_values_concate = "|".join(sraid_values)
         samplename_values_concate = "|".join(samplename_values)
+        read_length_values_concate = "|".join(str(v) for v in read_length_values) # Convert to string
         description_values_concate = "|".join(description_values)
         data = data.copy() #beacuse QueryDict is immutable
         data["SRAID"] = sraid_values_concate
         data["SampleName"] = samplename_values_concate
+        data["ReadLength"] = read_length_values_concate
         data["Description"] = description_values_concate
         print(data)
         form = PublicDataForm(data)
@@ -44,8 +47,8 @@ def publicdata(request):
             sraid = form.cleaned_data["SRAID"]
             samplename = form.cleaned_data["SampleName"]
             reference = form.cleaned_data["Reference"]
+            readLength = form.cleaned_data["ReadLength"]
             description = form.cleaned_data["Description"]
-            print("TPRINT",sraid, samplename, reference, description)
 
             # Add app processes func from utils.py
             return render(request,"Bioinformatics/publicData_submitted.html")
