@@ -55,5 +55,19 @@ class pubdata:
     
     def run_nextflow(self, xls_file_path):
         log_file = self.saveDir.parent / f"/nextflow/log/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
-        subprocess.run(["nextflow", "run", "/n/ngs/tools/SECUNDO3/Scundo3_v4.2/main.nf", "--input", Path(xls_file_path).resolve()], text=True, stdout=log_file, stderr=subprocess.STDOUT)
+        subprocess.run(["nextflow", "run", "/n/ngs/tools/SECUNDO3/Scundo3_v4.2/main.nf", 
+                        "--public_dataxlsx", Path(xls_file_path).resolve(), 
+                        '--lab', self.Lab, '--requester', self.UserID, '--user_email', f"{self.UserID}@stowers.org" ], 
+                       text=True, stdout=log_file, stderr=subprocess.STDOUT)
+
+    def script_nextflow(self, xls_file_path):
+        log_file = self.saveDir.parent / f"/nextflow/log/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
+        run_cmd = f"nextflow run /n/ngs/tools/SECUNDO3/Scundo3_v4.2/main.nf \
+            --public_dataxlsx {Path(xls_file_path).resolve()} \
+            --lab {self.Lab} --requester {self.UserID} \
+            --user_email {self.UserID}@stowers.org > {log_file}"
+        script_file = self.saveDir.parent / f"/nextflow/log/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.sh"
+        with open(script_file, 'w') as f:
+            f.write("#!/bin/bash\n")
+            f.write(run_cmd)
         
