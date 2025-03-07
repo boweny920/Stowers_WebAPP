@@ -61,7 +61,6 @@ def publicdata(request):
                 SampleName=samplename,
                 ReadLength=readLength,
                 Description=description,
-                saveDir=settings.EXCEL_DIR,
             )
             
             xlsx_path = pubdata_obj.public_xlsx_maker()
