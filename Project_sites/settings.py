@@ -127,3 +127,5 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EXCEL_DIR = BASE_DIR / "run_data/excel_tables"
+
+NEXTFLOW_DIR = BASE_DIR / "run_data/nextflow"

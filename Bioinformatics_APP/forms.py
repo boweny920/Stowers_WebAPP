@@ -2,6 +2,7 @@ from django import forms
 from django.conf import settings
 import pandas as pd
 import os 
+from django.conf import settings
 
 roboindex_df = pd.read_csv(os.path.join(settings.BASE_DIR, 'static', 'tables', 'sampleSheet_ROBOINDEX.csv'))
 genomes = roboindex_df['name'].unique()

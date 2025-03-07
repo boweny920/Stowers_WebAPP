@@ -3,9 +3,10 @@ import os
 from datetime import datetime
 import subprocess
 from pathlib import Path
+from django.conf import settings
 
 now = datetime.now()
-formated_run_time = now.strftime("%Y-%m-%d %H:%M:%S")
+formated_run_time = now.strftime("%Y-%m-%d_%H:%M:%S")
 
 class pubdata:
 
@@ -45,7 +46,7 @@ class pubdata:
             "ReadType": [self.ReadType] * len(self.SRAIDs),
             "ReadLength": self.ReadLength,
             "Genome": [self.Reference] * len(self.SRAIDs),
-            "Comments": self.Descriptions,
+            "Comments": [self.Descriptions] * len(self.SRAIDs),
         }
         
         df = pd.DataFrame(data)
@@ -54,19 +55,22 @@ class pubdata:
         return os.path.join(self.saveDir,f"{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.xlsx") # Return the path to the table
     
     def run_nextflow(self, xls_file_path):
-        log_file = self.saveDir.parent / f"/nextflow/log/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
+        log_file = f"{settings.NEXTFLOW_DIR}/log/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
+        
         subprocess.run(["nextflow", "run", "/n/ngs/tools/SECUNDO3/Scundo3_v4.2/main.nf", 
                         "--public_dataxlsx", Path(xls_file_path).resolve(), 
                         '--lab', self.Lab, '--requester', self.UserID, '--user_email', f"{self.UserID}@stowers.org" ], 
-                       text=True, stdout=log_file, stderr=subprocess.STDOUT)
+                       text=True, stdout=Path(log_file).resolve(), stderr=subprocess.STDOUT)
 
     def script_nextflow(self, xls_file_path):
-        log_file = self.saveDir.parent / f"/nextflow/log/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
+        log_file = f"{settings.NEXTFLOW_DIR}/log/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
+        
         run_cmd = f"nextflow run /n/ngs/tools/SECUNDO3/Scundo3_v4.2/main.nf \
             --public_dataxlsx {Path(xls_file_path).resolve()} \
             --lab {self.Lab} --requester {self.UserID} \
-            --user_email {self.UserID}@stowers.org > {log_file}"
-        script_file = self.saveDir.parent / f"/nextflow/log/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.sh"
+            --user_email {self.UserID}@stowers.org > {Path(log_file).resolve()} 2>&1"
+        
+        script_file = f"{settings.NEXTFLOW_DIR}/script/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.sh"
         with open(script_file, 'w') as f:
             f.write("#!/bin/bash\n")
             f.write(run_cmd)

@@ -1,0 +1,2 @@
+#!/bin/bash
+nextflow run /n/ngs/tools/SECUNDO3/Scundo3_v4.2/main.nf             --public_dataxlsx /Users/by2747/WebApp/Stowers_WebAPP/run_data/excel_tables/by2747_Test2_2025-03-07_22:55:24.xlsx             --lab CompBio --requester by2747             --user_email by2747@stowers.org > /Users/by2747/WebApp/Stowers_WebAPP/run_data/nextflow/log/by2747_Test2_2025-03-07_22:55:24.nextflow.log 2>&1
