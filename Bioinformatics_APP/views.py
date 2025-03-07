@@ -26,7 +26,7 @@ def publicdata(request):
         userInfo = User_Info_Form(userData)
         if not userInfo.is_valid():
             print(userInfo.errors)
-            return render(request, "Bioinformatics/publicData_submitted_formatError.html")
+            return render(request, "Bioinformatics/publicData_submitted_formatError.html", context = {"form": userInfo})
 
         sraid_values = data.getlist("SRAID")
         samplename_values = data.getlist("SampleName")
@@ -35,7 +35,7 @@ def publicdata(request):
         # Join the values into a string using "|"
         sraid_values_concate = "|".join(sraid_values)
         samplename_values_concate = "|".join(samplename_values)
-        read_length_values_concate = "|".join(str(v) for v in read_length_values) # Convert to string
+        read_length_values_concate = "|".join(read_length_values)
         description_values_concate = "|".join(description_values)
         data = data.copy() #beacuse QueryDict is immutable
         data["SRAID"] = sraid_values_concate
@@ -47,7 +47,6 @@ def publicdata(request):
         if form.is_valid():
             sraid = form.cleaned_data["SRAID"]
             samplename = form.cleaned_data["SampleName"]
-            reference = form.cleaned_data["Reference"]
             readLength = form.cleaned_data["ReadLength"]
             description = form.cleaned_data["Description"]
 
@@ -58,10 +57,10 @@ def publicdata(request):
                 PROJECT_NAME=userInfo.cleaned_data["PROJECT_NAME"],
                 ReadType=userInfo.cleaned_data["ReadType"],
                 Reference=userInfo.cleaned_data["Reference"],
-                SRAID=sraid.split("|"),
-                SampleName=samplename.split("|"),
-                ReadLength=readLength.split("|"),
-                Description=description.split("|"),
+                SRAID=sraid,
+                SampleName=samplename,
+                ReadLength=readLength,
+                Description=description,
                 saveDir=settings.EXCEL_DIR,
             )
             
@@ -70,7 +69,7 @@ def publicdata(request):
             return render(request,"Bioinformatics/publicData_submitted.html")
         else:
             print(form.errors) # This will print the errors in the form
-            return render(request, "Bioinformatics/publicData_submitted_formatError.html")
+            return render(request, "Bioinformatics/publicData_submitted_formatError.html", context = {"form": form})
 
     else:
         form = PublicDataForm()

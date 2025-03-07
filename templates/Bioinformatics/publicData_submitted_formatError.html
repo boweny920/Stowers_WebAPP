@@ -11,10 +11,23 @@
 </br>
 
 <div class="ui container" style="text-align:center;">
-    <h3 class="ui header" style="color: red;" >An error was detected when checking your submission. Please check you have the correct format in each field. </h3>
+    <h3 class="ui header" style="color: red;" >Errors were detected when checking your submission. </h3>
     </br>
-    <button type="button" onclick="window.location.href='publicdata_submit';">Submit new order for Public Data Analysis</button>
-    <h4 class="'ui header">If you believe this is an error, please contact the Bioinformatics Core.</h3>
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            <strong>Please fix the following errors and submit again:</strong>
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ field|title }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    </br>
+    <button type="button" onclick="window.location.href='publicdata_submit';">Back</button>
+    <h4 class="'ui header">If you need help, please contact the Bioinformatics Core.</h3>
 </div>
 </br>
 

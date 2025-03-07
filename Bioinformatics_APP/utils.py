@@ -1,11 +1,14 @@
 import pandas as pd
 import os
 from datetime import datetime
+import subprocess
+from pathlib import Path
 
 now = datetime.now()
 formated_run_time = now.strftime("%Y-%m-%d %H:%M:%S")
 
 class pubdata:
+
     def __init__(
         self,
         Lab,
@@ -40,13 +43,17 @@ class pubdata:
             "SampleName": self.SampleNames,
             "ExprimentType": ["RNA-seq"] * len(self.SRAIDs),
             "ReadType": [self.ReadType] * len(self.SRAIDs),
-            "ReadLength": [self.ReadLength] * len(self.SRAIDs),
+            "ReadLength": self.ReadLength,
             "Genome": [self.Reference] * len(self.SRAIDs),
-            "Comments": [self.Descriptions] * len(self.SRAIDs),
+            "Comments": self.Descriptions,
         }
-
+        
         df = pd.DataFrame(data)
         df.to_excel(os.path.join(self.saveDir,f"{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.xlsx"), index=False)
 
         return os.path.join(self.saveDir,f"{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.xlsx") # Return the path to the table
     
+    def run_nextflow(self, xls_file_path):
+        log_file = self.saveDir.parent / f"/nextflow/log/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
+        subprocess.run(["nextflow", "run", "/n/ngs/tools/SECUNDO3/Scundo3_v4.2/main.nf", "--input", Path(xls_file_path).resolve()], text=True, stdout=log_file, stderr=subprocess.STDOUT)
+        

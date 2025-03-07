@@ -16,7 +16,7 @@ class PublicDataForm(forms.Form):
     SampleName = forms.CharField(max_length=2000, required=True,
                                  widget=forms.Textarea(attrs={'placeholder': 'Enter Sample Name here', 'rows': 1, 'cols': 25})
                                  )
-    ReadLength = forms.IntegerField(required=True,
+    ReadLength = forms.CharField(max_length=10, required=True,
                                     widget=forms.Textarea(attrs={"placeholder": "Enter Read Length", "rows": 1, "cols": 15})
                                     )
     Description = forms.CharField(required=False,
@@ -28,17 +28,30 @@ class PublicDataForm(forms.Form):
         # Make sure you have SRA IDs in the input 
         if "SRA" not in data.upper():
             raise forms.ValidationError("SRAID field must contain 'SRA'.")
+        ## Need to consider the table to NOT have two SRA ids in the same table!
+        SRA_list = [item.strip() for item in data.split('|') if item.strip()]
+        seen = set()
+        duplicates = set(x for x in SRA_list if x in seen or seen.add(x))
+
+        if len(duplicates) > 0:
+            raise forms.ValidationError(f"Check IDs {" ".join(duplicates)} must be unique.")
+        
         """Splits SRAID by '|' into a list"""
         return [item.strip() for item in data.split('|') if item.strip()]  # Remove empty values
 
     def clean_SampleName(self):
         data = self.cleaned_data['SampleName']
         """Splits SampleName by '|' into a list"""
+
         return [item.strip() for item in data.split('|') if item.strip()]
-    def clean_readLength(self):
-        data = self.clean_data["ReadLength"]
-        if data == 0:
+    
+    def clean_ReadLength(self):
+        data = self.cleaned_data["ReadLength"]
+        if any(int(v.strip()) for v in data.split("|") if int(v.strip()) <= 0):
             raise forms.ValidationError("Read length must be a positive integer")
+        else:
+            return [v.strip() for v in data.split("|") if v.strip()]
+        
     def clean_Description(self):
         data = self.cleaned_data['Description']
         """Splits Description by '|' into a list"""
