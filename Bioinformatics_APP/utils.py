@@ -44,32 +44,32 @@ class pubdata:
             "ReadType": [self.ReadType] * len(self.SRAIDs),
             "ReadLength": self.ReadLength,
             "Genome": [self.Reference] * len(self.SRAIDs),
-            "Comments": [self.Descriptions] * len(self.SRAIDs),
+            "Comments": self.Descriptions,
         }
         
         df = pd.DataFrame(data)
         execl_file = settings.EXCEL_DIR / f"{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.xlsx"
         df.to_excel(execl_file, index=False)
 
-        return  execl_file.resolve() # Return the path to the table
+        return  execl_file # Return the Path obj of the table
     
-    def run_nextflow(self, xls_file_path):
-        log_file = settings.NEXTFLOW_DIR / f"log/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
+    def run_nextflow(self, xls_file_path: Path):
+        log_file = settings.NEXTFLOW_DIR / "log" / f"{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
         
         subprocess.run(["nextflow", "run", "/n/ngs/tools/SECUNDO3/Scundo3_v4.2/main.nf", 
-                        "--public_dataxlsx", Path(xls_file_path).resolve(), 
+                        "--public_dataxlsx", xls_file_path.resolve(), 
                         '--lab', self.Lab, '--requester', self.UserID, '--user_email', f"{self.UserID}@stowers.org" ], 
-                       text=True, stdout=Path(log_file).resolve(), stderr=subprocess.STDOUT)
+                       text=True, stdout=log_file, stderr=subprocess.STDOUT)
 
-    def script_nextflow(self, xls_file_path):
-        log_file = settings.NEXTFLOW_DIR / f"log/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
+    def script_nextflow(self, xls_file_path: Path):
+        log_file = settings.NEXTFLOW_DIR / "log" / f"{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
         
         run_cmd = f"nextflow run /n/ngs/tools/SECUNDO3/Scundo3_v4.2/main.nf \
-            --public_dataxlsx {Path(xls_file_path).resolve()} \
+            --public_dataxlsx {xls_file_path.resolve()} \
             --lab {self.Lab} --requester {self.UserID} \
-            --user_email {self.UserID}@stowers.org > {Path(log_file).resolve()} 2>&1"
+            --user_email {self.UserID}@stowers.org > {log_file.resolve()} 2>&1"
         
-        script_file = settings.NEXTFLOW_DIR / f"script/{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.sh"
+        script_file = settings.NEXTFLOW_DIR / "script" / f"{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.sh"
         with open(script_file, 'w') as f:
             f.write("#!/bin/bash\n")
             f.write(run_cmd)

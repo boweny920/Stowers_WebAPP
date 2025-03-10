@@ -63,9 +63,9 @@ def publicdata(request):
                 Description=description,
             )
             
-            xlsx_path = pubdata_obj.public_xlsx_maker()
+            xlsx_table = pubdata_obj.public_xlsx_maker()
             # pubdata_obj.run_nextflow(xlsx_path)
-            pubdata_obj.script_nextflow(xlsx_path)
+            pubdata_obj.script_nextflow(xlsx_table)
 
             return render(request,"Bioinformatics/publicData_submitted.html")
         else:
