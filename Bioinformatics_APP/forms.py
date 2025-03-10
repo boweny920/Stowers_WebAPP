@@ -7,6 +7,7 @@ from django.conf import settings
 roboindex_df = pd.read_csv(os.path.join(settings.BASE_DIR, 'static', 'tables', 'sampleSheet_ROBOINDEX.csv'))
 genomes = roboindex_df['name'].unique()
 GENOMES = [(i, i) for i in genomes]
+LABS = [(line.strip(), line.strip()) for line in open(os.path.join(settings.BASE_DIR, 'static', 'tables', 'labs.txt')).readlines()]
 
 
 class PublicDataForm(forms.Form):
@@ -58,8 +59,6 @@ class PublicDataForm(forms.Form):
         """Splits Description by '|' into a list"""
         return [item.strip() for item in data.split('|') if item.strip()]
 
-
-LABS = [(line.strip(), line.strip()) for line in open(os.path.join(settings.BASE_DIR, 'static', 'tables', 'labs.txt')).readlines()]
 
 class User_Info_Form(forms.Form):
     UserID = forms.CharField(max_length=100, required=True,
