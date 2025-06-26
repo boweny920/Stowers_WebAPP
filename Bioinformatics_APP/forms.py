@@ -4,6 +4,7 @@ import pandas as pd
 import os 
 from django.conf import settings
 
+
 roboindex_df = pd.read_csv(os.path.join(settings.BASE_DIR, 'static', 'tables', 'sampleSheet_ROBOINDEX.csv'))
 genomes = roboindex_df['name'].unique()
 GENOMES = [(i, i) for i in genomes]
@@ -12,37 +13,49 @@ LABS = [(line.strip(), line.strip()) for line in open(os.path.join(settings.BASE
 
 class PublicDataForm(forms.Form):
     
-    SRAID = forms.CharField(max_length=2000, required=True, 
-                            widget=forms.Textarea(attrs={'placeholder': 'Enter Sample SRA ID here, one per line', 'rows': 5, 'cols': 25})
+    Identifiers = forms.CharField(max_length=2000, required=True, 
+                            widget=forms.Textarea(attrs={'placeholder': 
+                            'e.g.\n'
+                            'SRA123456\n'
+                            'SRR123456\n'
+                            'SRX8171613\n'
+                            'GSE123456\n'
+                            'GSM123456\n'
+                            'ERR4007730\n'
+                            'ERX4009132\n'
+                            'DRR171822\n'
+                            'DRX123456','rows': 10, 'cols': 40})
                             )
-    
-    UserID = forms.CharField(max_length=10, required=True,
-                             widget=forms.Textarea(attrs={'placeholder': 'Enter Stowers User ID here', 'rows': 1, 'cols': 25})
-                             )
-    
-    Lab = forms.ChoiceField(choices=LABS, 
-                            widget=forms.Select(attrs={'placeholder': 'Choose Your lab', 'rows': 1, 'cols': 15})
-    )
     
     Reference = forms.ChoiceField(choices=GENOMES, 
                                   widget=forms.Select(attrs={'placeholder': 'Choose One Genome Per Submission', 'rows': 1, 'cols': 15})
                                   )
     
-    def clean_SRAID(self):
-        data = self.cleaned_data['SRAID']
+    UserID = forms.CharField(max_length=10, required=True,
+                             widget=forms.Textarea(attrs={'placeholder': 'e.g. by2747', 'rows': 1, 'cols': 25})
+                             )
+    
+    Lab = forms.ChoiceField(choices=LABS, 
+                            widget=forms.Select(attrs={'placeholder': 'Choose Your lab', 'rows': 1, 'cols': 15})
+    )
+
+
+    def clean_Identifiers(self):
+        data = self.cleaned_data['Identifiers']
         # Consider security issues with the input
         if "/bin/bash" in data or "/bin/sh" in data:
-            raise forms.ValidationError("Invalid input detected in SRAID. Please check your input.")
+            raise forms.ValidationError("Invalid input detected in Identifiers. Please check your input.")
         if "rm" in data or "mv" in data:
-            raise forms.ValidationError("Invalid input detected in SRAID. Please check your input.")
+            raise forms.ValidationError("Invalid input detected in Identifiers. Please check your input.")
 
         # Make sure you have SRA IDs in the input 
-        if "SRA" not in data.upper():
-            raise forms.ValidationError("SRAID field must contain 'SRA'.")
+        allowed_IDs = ["SRA", "SRR", "SRX", "GSE", "GSM", "ERR", "ERX", "DRR", "DRX"]
+        if not any(id_ in data.upper() for id_ in allowed_IDs):
+            raise forms.ValidationError("Identifiers field must contain one of the allowed IDs (e.g., 'SRA', 'SRX', 'SRR', 'GSE', 'ERX', 'ERR', 'DRX', 'DRR').")
+        
         ## Need to consider the table to NOT have two SRA ids in the same table!
         if any(item.rstrip() for item in data.split('\n') if " " in item.rstrip()):
-            raise forms.ValidationError("SRAID field must not contain spaces.")
-        
+            raise forms.ValidationError("Identifiers field must not contain spaces.")
         
         """Splits SRAID by '|' into a list"""
         return set(item.strip() for item in data.split('\n'))  # Remove empty values
@@ -55,6 +68,3 @@ class PublicDataForm(forms.Form):
             raise forms.ValidationError("Invalid input detected in UserID. Please check your input.")
         
         return data
-
-
-    

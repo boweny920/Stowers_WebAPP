@@ -5,11 +5,8 @@ from django.utils import timezone
 from .forms import PublicDataForm
 from django.http import HttpResponseRedirect
 from django.conf import settings
-from .utils import pubdata
-
-### home page
-def Home(request):
-    return render(request,"Bioinformatics/Home.html")
+from .utils import pubdata_run
+from .models import pubData_RunData
 
 ### public data submission
 def publicdata(request):
@@ -18,27 +15,21 @@ def publicdata(request):
 
         form = PublicDataForm(data)
         if form.is_valid():
-            sraid = form.cleaned_data['SRAID']
-            Lab=userInfo.cleaned_data["Lab"],
-            UserID=userInfo.cleaned_data["UserID"]
-            print(sraid, Lab, UserID)
+            sraid = form.cleaned_data['Identifiers']
+            Lab = form.cleaned_data["Lab"]
+            UserID = form.cleaned_data["UserID"]
+            Reference = form.cleaned_data["Reference"]
+            # print(sraid, Lab, UserID, Reference)
 
-            # Using utils to create the xlsx file
-            # pubdata_obj = pubdata(
-            #     Lab=userInfo.cleaned_data["Lab"],
-            #     UserID=userInfo.cleaned_data["UserID"],
-            #     PROJECT_NAME=userInfo.cleaned_data["PROJECT_NAME"],
-            #     ReadType=userInfo.cleaned_data["ReadType"],
-            #     Reference=userInfo.cleaned_data["Reference"],
-            #     SRAID=sraid,
-            #     SampleName=samplename,
-            #     ReadLength=readLength,
-            #     Description=description,
-            # )
-            
-            # xlsx_table = pubdata_obj.public_xlsx_maker()
-            # # pubdata_obj.run_nextflow(xlsx_path)
-            # pubdata_obj.script_nextflow(xlsx_table)
+            # Save the run data to the database"
+            pubData_RunData.objects.create(
+                Identifiers="|".join(str(v) for v in sraid),
+                Reference=Reference,
+                UserID=UserID,
+                Lab=Lab,
+            )
+
+            pubdata_run(ID_Set=sraid, Lab=Lab, UserID=UserID).ID_Csv_maker()
 
             return render(request,"Bioinformatics/publicData_submitted.html")
         else:
