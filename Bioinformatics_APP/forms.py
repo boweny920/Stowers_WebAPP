@@ -49,8 +49,13 @@ class PublicDataForm(forms.Form):
             raise forms.ValidationError("Invalid input detected in Identifiers. Please check your input.")
 
         # Make sure you have SRA IDs in the input 
+        ids = str(data.upper()).split('\n')
         allowed_IDs = ["SRA", "SRR", "SRX", "GSE", "GSM", "ERR", "ERX", "DRR", "DRX"]
-        if not any(id_ in data.upper() for id_ in allowed_IDs):
+        checkallIDs = all( # This checks if all IDs start with one of the allowed prefixes
+                        any(v.startswith(prefix) for prefix in allowed_IDs)
+                        for v in ids
+                        )
+        if not checkallIDs:
             raise forms.ValidationError("Identifiers field must contain one of the allowed IDs (e.g., 'SRA', 'SRX', 'SRR', 'GSE', 'ERX', 'ERR', 'DRX', 'DRR').")
         
         ## Need to consider the table to NOT have two SRA ids in the same table!

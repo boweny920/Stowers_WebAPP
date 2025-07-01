@@ -41,4 +41,3 @@ def publicdata(request):
     context = { "form": form }
     
     return render(request, "Bioinformatics/publicData_form.html", context=context)
-
