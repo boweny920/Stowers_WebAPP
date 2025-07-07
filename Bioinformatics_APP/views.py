@@ -29,7 +29,7 @@ def publicdata(request):
                 Lab=Lab,
             )
 
-            pubdata_run(ID_Set=sraid, Lab=Lab, UserID=UserID).ID_Csv_maker()
+            pubdata_run(ID_Set=sraid, Lab=Lab, UserID=UserID, Reference=Reference).ID_Csv_maker()
 
             return render(request,"Bioinformatics/publicData_submitted.html")
         else:

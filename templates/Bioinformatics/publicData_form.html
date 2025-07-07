@@ -23,8 +23,9 @@
         <li>Select your lab in the <strong>Lab</strong> drop-down box, this will let us know where on Stowers' NFS to save your results.</li>
         <li>Click the <strong>"Submit"</strong> button to start the analysis.</li>
         <li>The results will be emailed to you once the analysis is complete.</li>
-    <h4 style="color: darkred;"><i>Quick Note</i></h4>
-    <p>If SRR/ERR/DRR run ids are provided then these will be resolved back to their appropriate SRX/ERX/DRX ids to be able to merge multiple runs from the same experiment. This is conceptually the same as merging multiple libraries sequenced from the same sample.</p>
+    <h4 style="color: darkred;"><i>Quick Notes</i></h4>
+    <li>If SRR/ERR/DRR run ids are provided then these will be resolved back to their appropriate SRX/ERX/DRX ids to be able to merge multiple runs from the same experiment. This is conceptually the same as merging multiple libraries sequenced from the same sample.</li>
+    <li>If the run ids provided are of different projects, then analysis will be performed separately for each project, and the results will also be sent out separately.</li>
 </div>
 
 </br>
@@ -33,7 +34,7 @@
 <div class="ui form" style="max-width: 800px; margin: 0 auto;">
     <form action="publicdata" method="post">
         {% csrf_token %}
-        <table id="sraTable">
+        <table id="idTable">
             <thead>
                 <tr>
                     {% for field in form %}
@@ -59,7 +60,7 @@
 </div>
 
 <div class="ui container" style="text-align:center;">
-    <p>If you have any questions or need assistance, please contact us at <a href="mailto:by2747@stowers.org">Byang@stowers.org</a></p>
+    <p>If you have any questions or need assistance, please contact us at <a href="mailto:helpcompbio@stowers.org">helpcompbio@stowers.org</a></p>
 </div>
 </br>
 </br>

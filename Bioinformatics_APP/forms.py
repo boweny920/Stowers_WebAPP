@@ -5,7 +5,7 @@ import os
 from django.conf import settings
 
 
-roboindex_df = pd.read_csv(os.path.join(settings.BASE_DIR, 'static', 'tables', 'sampleSheet_ROBOINDEX.csv'))
+roboindex_df = pd.read_csv(os.path.join(settings.BASE_DIR, 'static', 'tables', 'sampleSheet_ROBOINDEX_2023.csv'))
 genomes = roboindex_df['name'].unique()
 GENOMES = [(i, i) for i in genomes]
 LABS = [(line.strip(), line.strip()) for line in open(os.path.join(settings.BASE_DIR, 'static', 'tables', 'labs.txt')).readlines()]
