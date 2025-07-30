@@ -132,6 +132,6 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSV_DIR = BASE_DIR / "run_data" / "csv_tables"
+CSV_DIR = Path("/n/core/Bioinformatics/PDataDIY")
 
 NEXTFLOW_DIR = BASE_DIR / "run_data" / "nextflow"
