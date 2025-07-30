@@ -19,6 +19,7 @@ def publicdata(request):
             Lab = form.cleaned_data["Lab"]
             UserID = form.cleaned_data["UserID"]
             Reference = form.cleaned_data["Reference"]
+            Analysis = form.cleaned_data["Analysis"]
             # print(sraid, Lab, UserID, Reference)
 
             # Save the run data to the database"
@@ -27,9 +28,10 @@ def publicdata(request):
                 Reference=Reference,
                 UserID=UserID,
                 Lab=Lab,
+                Analysis=Analysis,
             )
 
-            pubdata_run(ID_Set=sraid, Lab=Lab, UserID=UserID, Reference=Reference).ID_Csv_maker()
+            pubdata_run(ID_Set=sraid, Lab=Lab, UserID=UserID, Reference=Reference, Analysis=Analysis).ID_Csv_maker()
 
             return render(request,"Bioinformatics/publicData_submitted.html")
         else:

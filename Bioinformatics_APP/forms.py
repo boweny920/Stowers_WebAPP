@@ -3,15 +3,31 @@ from django.conf import settings
 import pandas as pd
 import os 
 from django.conf import settings
+from .utils import pubdata_run
 
 
-roboindex_df = pd.read_csv(os.path.join(settings.BASE_DIR, 'static', 'tables', 'sampleSheet_ROBOINDEX_2023.csv'))
-genomes = roboindex_df['name'].unique()
+genomes = pubdata_run().species_genome_annotation_nameMake()
 GENOMES = [(i, i) for i in genomes]
 LABS = [(line.strip(), line.strip()) for line in open(os.path.join(settings.BASE_DIR, 'static', 'tables', 'labs.txt')).readlines()]
 
 
 class PublicDataForm(forms.Form):
+    
+    Lab = forms.ChoiceField(choices=LABS, 
+                            widget=forms.Select(attrs={'placeholder': 'Choose Your lab', 'rows': 1, 'cols': 20})
+    )
+    
+    UserID = forms.CharField(max_length=10, required=True,
+                            widget=forms.Textarea(attrs={'placeholder': 'e.g. by2747', 'rows': 1, 'cols': 15})
+                            )
+
+    Analysis = forms.ChoiceField(choices=[('bulk-RNA-Seq', 'bulk-RNA-Seq'), ('Download-Fastqs', 'Download-Fastqs')], # DO NOT include "_" in the choices!
+                                widget=forms.Select(attrs={'placeholder': 'Choose Your Analysis Type', 'rows': 2, 'cols': 25})
+                                )
+    
+    Reference = forms.ChoiceField(choices=GENOMES, 
+                                widget=forms.Select(attrs={'placeholder': 'Choose One Genome Per Submission', 'rows': 2, 'cols': 20})
+                                )
     
     Identifiers = forms.CharField(max_length=2000, required=True, 
                             widget=forms.Textarea(attrs={'placeholder': 
@@ -24,22 +40,10 @@ class PublicDataForm(forms.Form):
                             'ERR4007730\n'
                             'ERX4009132\n'
                             'DRR171822\n'
-                            'DRX123456','rows': 10, 'cols': 40})
+                            'DRX123456','rows': 4, 'cols': 18})
                             )
-    
-    Reference = forms.ChoiceField(choices=GENOMES, 
-                                  widget=forms.Select(attrs={'placeholder': 'Choose One Genome Per Submission', 'rows': 1, 'cols': 15})
-                                  )
-    
-    UserID = forms.CharField(max_length=10, required=True,
-                             widget=forms.Textarea(attrs={'placeholder': 'e.g. by2747', 'rows': 1, 'cols': 25})
-                             )
-    
-    Lab = forms.ChoiceField(choices=LABS, 
-                            widget=forms.Select(attrs={'placeholder': 'Choose Your lab', 'rows': 1, 'cols': 15})
-    )
 
-
+    
     def clean_Identifiers(self):
         data = self.cleaned_data['Identifiers']
         # Consider security issues with the input

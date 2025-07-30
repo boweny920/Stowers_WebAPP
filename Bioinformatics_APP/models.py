@@ -10,6 +10,7 @@ class pubData_RunData(models.Model):
     UserID = models.CharField(max_length=10)
     Lab = models.CharField(max_length=100)
     CreatedAt = models.DateTimeField(auto_now_add=True)
+    Analysis = models.CharField(max_length=50)
 
     def __str__(self):
         return f"{self.UserID} - {self.Lab} - {self.CreatedAt.strftime('%Y-%m-%d %H:%M:%S')}"

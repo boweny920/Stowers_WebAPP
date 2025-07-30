@@ -26,6 +26,11 @@ SECRET_KEY = 'django-insecure-q4ybga^3qv^009h9*4-olbr4epf9logdrip=kvfq4eobw4!e=y
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ["10.0.53.122", "compbio"]
+# Allow cookies from https://compbio, e.g. when submitting a form
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://compbio',
+# ]
 
 
 # Application definition
@@ -112,7 +117,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -120,12 +124,19 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+# STATIC_URL = '/publicdata/static/'
+# STATICFILES_DIRS = [
+#     BASE_DIR / "/publicdata/static",
+# ]
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSV_DIR = BASE_DIR / "run_data" / "csv_tables"
+# CSV_DIR = BASE_DIR / "run_data" / "csv_tables"
+CSV_DIR = Path("/n/core/Bioinformatics/PDataDIY")
 
 NEXTFLOW_DIR = BASE_DIR / "run_data" / "nextflow"

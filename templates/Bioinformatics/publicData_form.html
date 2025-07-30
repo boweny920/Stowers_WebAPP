@@ -17,10 +17,11 @@
 
 <div class="ui container">
     <h3 style="color: darkgreen;">Instructions</h3>
-        <li>Enter the SRA / ENA / DDBJ / GEO ids in the <strong>Identifiers</strong> box, one id per line.</li>
-        <li>Select one of the species you would like to use as the reference for alignment from the <strong>Reference</strong> drop-down box.</li> 
-        <li>Input your Stowers ID in the <strong>UserID</strong> box, this will allow us to know where to send the results to when finished.</li>
         <li>Select your lab in the <strong>Lab</strong> drop-down box, this will let us know where on Stowers' NFS to save your results.</li>
+        <li>Input your Stowers ID in the <strong>UserID</strong> box, this will allow us to know where to send the results to when finished.</li>
+        <li>Choose your analysis type in the <strong>Analysis</strong> drop-down box. If you select "Download-Fastqs", links to the downloaded Fastq files will be sent to your email.</li>
+        <li>Select one of the species you would like to use as the reference for alignment from the <strong>Reference</strong> drop-down box.</li>
+        <li>Enter the SRA / ENA / DDBJ / GEO ids in the <strong>Identifiers</strong> box, one id per line.</li>
         <li>Click the <strong>"Submit"</strong> button to start the analysis.</li>
         <li>The results will be emailed to you once the analysis is complete.</li>
     <h4 style="color: darkred;"><i>Quick Notes</i></h4>
@@ -31,7 +32,7 @@
 </br>
 </br>
 
-<div class="ui form" style="max-width: 800px; margin: 0 auto;">
+<div class="ui form" style="max-width: 1200px; margin: 0 auto;">
     <form action="publicdata" method="post">
         {% csrf_token %}
         <table id="idTable">
