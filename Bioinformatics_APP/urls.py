@@ -1,7 +1,10 @@
 from django.urls import path, include, re_path
 from . import views
+from django.contrib import admin
+
 
 urlpatterns = [
-    re_path("home", views.Home, name= "home"),
-    re_path("publicdata", views.publicdata, name="publicdata"),
+    re_path("^$", views.publicdata, name="publicdata"),
+    path("publicdata", views.publicdata, name="publicdata"),
+    path('admin/', admin.site.urls),
 ]

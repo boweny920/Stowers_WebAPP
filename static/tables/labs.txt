@@ -1,17 +1,12 @@
-Baumann
 Bazzini
 CompBio
-Conaway_J
-Conaway_R
 Cytometry
 Gerton
 Gibson
 Halfmann
 Hawley
-Jaspersen
 Kostova
 Krumlauf
-Kulesa
 Li_L
 Li_R
 Ozel
@@ -25,7 +20,6 @@ Si
 Tissue
 Tissue_Culture
 Trainor
-Washburn
 Workman
 Xie
 Yu

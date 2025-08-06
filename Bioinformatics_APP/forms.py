@@ -3,76 +3,77 @@ from django.conf import settings
 import pandas as pd
 import os 
 from django.conf import settings
+from .utils import pubdata_run
 
-roboindex_df = pd.read_csv(os.path.join(settings.BASE_DIR, 'static', 'tables', 'sampleSheet_ROBOINDEX.csv'))
-genomes = roboindex_df['name'].unique()
+
+genomes = pubdata_run().species_genome_annotation_nameMake()
 GENOMES = [(i, i) for i in genomes]
 LABS = [(line.strip(), line.strip()) for line in open(os.path.join(settings.BASE_DIR, 'static', 'tables', 'labs.txt')).readlines()]
 
 
 class PublicDataForm(forms.Form):
     
-    SRAID = forms.CharField(max_length=2000, required=True, 
-                            widget=forms.Textarea(attrs={'placeholder': 'Enter Sample SRA ID here', 'rows': 1, 'cols': 25})
-                            )
-    SampleName = forms.CharField(max_length=2000, required=True,
-                                 widget=forms.Textarea(attrs={'placeholder': 'Enter Sample Name here', 'rows': 1, 'cols': 25})
-                                 )
-    ReadLength = forms.CharField(max_length=10, required=True,
-                                    widget=forms.Textarea(attrs={"placeholder": "Enter Read Length", "rows": 1, "cols": 15})
-                                    )
-    Description = forms.CharField(required=False,
-        widget=forms.Textarea(attrs={'placeholder': 'Put a short description of your sample. Leave empty if None', 'rows': 1, 'cols': 55})
-        )
+    Lab = forms.ChoiceField(choices=LABS, 
+                            widget=forms.Select(attrs={'placeholder': 'Choose Your lab', 'rows': 1, 'cols': 20})
+    )
     
-    def clean_SRAID(self):
-        data = self.cleaned_data['SRAID']
-        # Make sure you have SRA IDs in the input 
-        if "SRA" not in data.upper():
-            raise forms.ValidationError("SRAID field must contain 'SRA'.")
-        ## Need to consider the table to NOT have two SRA ids in the same table!
-        SRA_list = [item.strip() for item in data.split('|') if item.strip()]
-        seen = set()
-        duplicates = set(x for x in SRA_list if x in seen or seen.add(x))
+    UserID = forms.CharField(max_length=10, required=True,
+                            widget=forms.Textarea(attrs={'placeholder': 'e.g. by2747', 'rows': 1, 'cols': 15})
+                            )
 
-        if len(duplicates) > 0:
-            raise forms.ValidationError(f"Check IDs {" ".join(duplicates)} must be unique.")
+    Analysis = forms.ChoiceField(choices=[('bulk-RNA-Seq', 'bulk-RNA-Seq'), ('Download-Fastqs', 'Download-Fastqs')], # DO NOT include "_" in the choices!
+                                widget=forms.Select(attrs={'placeholder': 'Choose Your Analysis Type', 'rows': 2, 'cols': 25})
+                                )
+    
+    Reference = forms.ChoiceField(choices=GENOMES, 
+                                widget=forms.Select(attrs={'placeholder': 'Choose One Genome Per Submission', 'rows': 2, 'cols': 20})
+                                )
+    
+    Identifiers = forms.CharField(max_length=2000, required=True, 
+                            widget=forms.Textarea(attrs={'placeholder': 
+                            'e.g.\n'
+                            'SRA123456\n'
+                            'SRR123456\n'
+                            'SRX8171613\n'
+                            'GSE123456\n'
+                            'GSM123456\n'
+                            'ERR4007730\n'
+                            'ERX4009132\n'
+                            'DRR171822\n'
+                            'DRX123456','rows': 4, 'cols': 18})
+                            )
+
+    
+    def clean_Identifiers(self):
+        data = self.cleaned_data['Identifiers']
+        # Consider security issues with the input
+        if "/bin/bash" in data or "/bin/sh" in data:
+            raise forms.ValidationError("Invalid input detected in Identifiers. Please check your input.")
+        if "rm" in data or "mv" in data:
+            raise forms.ValidationError("Invalid input detected in Identifiers. Please check your input.")
+
+        # Make sure you have SRA IDs in the input 
+        ids = str(data.upper()).split('\n')
+        allowed_IDs = ["SRA", "SRR", "SRX", "GSE", "GSM", "ERR", "ERX", "DRR", "DRX"]
+        checkallIDs = all( # This checks if all IDs start with one of the allowed prefixes
+                        any(v.startswith(prefix) for prefix in allowed_IDs)
+                        for v in ids
+                        )
+        if not checkallIDs:
+            raise forms.ValidationError("Identifiers field must contain one of the allowed IDs (e.g., 'SRA', 'SRX', 'SRR', 'GSE', 'ERX', 'ERR', 'DRX', 'DRR').")
+        
+        ## Need to consider the table to NOT have two SRA ids in the same table!
+        if any(item.rstrip() for item in data.split('\n') if " " in item.rstrip()):
+            raise forms.ValidationError("Identifiers field must not contain spaces.")
         
         """Splits SRAID by '|' into a list"""
-        return [item.strip() for item in data.split('|') if item.strip()]  # Remove empty values
+        return set(item.strip() for item in data.split('\n'))  # Remove empty values
 
-    def clean_SampleName(self):
-        data = self.cleaned_data['SampleName']
-        """Splits SampleName by '|' into a list"""
-
-        return [item.strip() for item in data.split('|') if item.strip()]
-    
-    def clean_ReadLength(self):
-        data = self.cleaned_data["ReadLength"]
-        if any(int(v.strip()) for v in data.split("|") if int(v.strip()) <= 0):
-            raise forms.ValidationError("Read length must be a positive integer")
-        else:
-            return [v.strip() for v in data.split("|") if v.strip()]
+    def clean_UserID(self):
+        data = self.cleaned_data['UserID']
+        if "/bin/bash" in data or "/bin/sh" in data:
+            raise forms.ValidationError("Invalid input detected in UserID. Please check your input.")
+        if "rm" in data or "mv" in data:
+            raise forms.ValidationError("Invalid input detected in UserID. Please check your input.")
         
-    def clean_Description(self):
-        data = self.cleaned_data['Description']
-        """Splits Description by '|' into a list"""
-        return [item.strip() for item in data.split('|') if item.strip()]
-
-
-class User_Info_Form(forms.Form):
-    UserID = forms.CharField(max_length=100, required=True,
-                             widget=forms.Textarea(attrs={'placeholder': 'Enter Stowers User ID here', 'rows': 1, 'cols': 25})
-                             )
-    Lab = forms.ChoiceField(choices=LABS, 
-                            widget=forms.Select(attrs={'placeholder': 'Choose Your lab', 'rows': 1, 'cols': 15})
-    )
-    PROJECT_NAME = forms.CharField(max_length=100, required=True,
-                                   widget=forms.Textarea(attrs={'placeholder': 'Enter Project Name here', 'rows': 1, 'cols': 25})
-                                   )
-    ReadType = forms.ChoiceField(choices=[('PE', 'Paired-End'), ('SE', 'Single-End')],
-                                 widget=forms.Select(attrs={'placeholder': 'Choose One Read Type Per Submission', 'rows': 1, 'cols': 15})
-                                 )
-    Reference = forms.ChoiceField(choices=GENOMES, 
-                                  widget=forms.Select(attrs={'placeholder': 'Choose One Genome Per Submission', 'rows': 1, 'cols': 15})
-                                  )
+        return data

@@ -4,39 +4,38 @@
 
 {% block main %}
 
-<div class="ui container" style="text-align:left;">
+<div class="ui container" style="text-align:center;">
 </br>
     <div class="ui container">
         <h2 class="ui header">Public Data Analysis with Stowers Pipelines</h2>
+        <h3><i>This page allows you to have a public dataset from NCBI, EBI, and NIG's collection analyzed using Stowers' own Pipelines.</i></h3>
     </br>
-        <p>This page allows you to have a public dataset from NCBI's SRA collection analyzed with by Stowers' own Pipelines.</p>
     </div>
+
 </div>
 </br>
-<div class="ui container" style="text-align:center;">
 
+<div class="ui container">
+    <h3 style="color: darkgreen;">Instructions</h3>
+        <li>Select your lab in the <strong>Lab</strong> drop-down box, this will let us know where on Stowers' NFS to save your results.</li>
+        <li>Input your Stowers ID in the <strong>UserID</strong> box, this will allow us to know where to send the results to when finished.</li>
+        <li>Choose your analysis type in the <strong>Analysis</strong> drop-down box. If you select "Download-Fastqs", links to the downloaded Fastq files will be sent to your email.</li>
+        <li>Select one of the species you would like to use as the reference for alignment from the <strong>Reference</strong> drop-down box.</li>
+        <li>Enter the SRA / ENA / DDBJ / GEO ids in the <strong>Identifiers</strong> box, one id per line.</li>
+        <li>Click the <strong>"Submit"</strong> button to start the analysis.</li>
+        <li>The results will be emailed to you once the analysis is complete.</li>
+    <h4 style="color: darkred;"><i>Quick Notes</i></h4>
+    <li>If SRR/ERR/DRR run ids are provided then these will be resolved back to their appropriate SRX/ERX/DRX ids to be able to merge multiple runs from the same experiment. This is conceptually the same as merging multiple libraries sequenced from the same sample.</li>
+    <li>If the run ids provided are of different projects, then analysis will be performed separately for each project, and the results will also be sent out separately.</li>
+</div>
+
+</br>
+</br>
+
+<div class="ui form" style="max-width: 1200px; margin: 0 auto;">
     <form action="publicdata" method="post">
         {% csrf_token %}
-        <table id="userInfo_Table">
-            <thead>
-                <tr>
-                    {% for field in userInfo %}
-                        <th>{{ field.label }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    {% for field in userInfo %}
-                        <td>
-                            {{ field }}  
-                        </td>
-                    {% endfor %}
-                </tr>
-            </tbody>
-        </table>
-    </br>
-        <table id="dynamicTable">
+        <table id="idTable">
             <thead>
                 <tr>
                     {% for field in form %}
@@ -55,20 +54,16 @@
             </tbody>
         </table>
         </br>
-        <button type="button" onclick="addRow()">Add Sample</button>
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" style="display: block; margin: 0 auto;">
     </form>
 </br>
 
 </div>
 
-<script>
-    function addRow() {
-        const table = document.getElementById('dynamicTable').getElementsByTagName('tbody')[0];
-        const newRow = table.rows[0].cloneNode(true); // Clone the first row
-        const inputs = newRow.getElementsByTagName('input');
-        table.appendChild(newRow); // Add the cloned row to the table
-    }
-</script>
+<div class="ui container" style="text-align:center;">
+    <p>If you have any questions or need assistance, please contact us at <a href="mailto:helpcompbio@stowers.org">helpcompbio@stowers.org</a></p>
+</div>
+</br>
+</br>
 
 {% endblock %}

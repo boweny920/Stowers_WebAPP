@@ -5,72 +5,50 @@ import subprocess
 from pathlib import Path
 from django.conf import settings
 
-now = datetime.now()
-formated_run_time = now.strftime("%Y-%m-%d_%H:%M:%S")
-
-class pubdata:
+class pubdata_run:
 
     def __init__(
         self,
-        Lab,
-        UserID,
-        PROJECT_NAME,
-        ReadType,
-        Reference,
-        SRAID,
-        SampleName,
-        ReadLength,
-        Description,
+        ID_Set="Default_SampleID",
+        Lab="Default_Lab",
+        UserID="Default_UserID",
+        Reference="Default_Reference",
+        Analysis="Default_Analysis",
     ):
+        self.ID_Set = ID_Set  # Split the input by '|'
         self.Lab = Lab
         self.UserID = UserID
-        self.PROJECT_NAME = PROJECT_NAME
-        self.ReadType = ReadType
-        self.Reference = Reference
-        # lists from here on:
-        self.SRAIDs = SRAID
-        self.SampleNames = SampleName
-        self.ReadLength = ReadLength
-        self.Descriptions = Description
-        # The location of where the xlsx file will be saved
+        self.Reference = "=".join(Reference
+                                    .replace("Genome Version:", "")
+                                    .replace("Annotation:", "")
+                                    .replace(" ", "")
+                                    .split(";")[1:]) 
+        self.Analysis = Analysis
 
-    def public_xlsx_maker(self):
-        # What to do with the lab and user ID? Maybe include them in the file name?
-        data = {
-            "GSE_ID": [self.PROJECT_NAME] * len(self.SRAIDs),
-            "GSM_ID": self.SRAIDs,
-            "SampleName": self.SampleNames,
-            "ExprimentType": ["RNA-seq"] * len(self.SRAIDs),
-            "ReadType": [self.ReadType] * len(self.SRAIDs),
-            "ReadLength": self.ReadLength,
-            "Genome": [self.Reference] * len(self.SRAIDs),
-            "Comments": self.Descriptions,
-        }
-        
-        df = pd.DataFrame(data)
-        execl_file = settings.EXCEL_DIR / f"{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.xlsx"
-        df.to_excel(execl_file, index=False)
-
-        return  execl_file # Return the Path obj of the table
+    def species_genome_annotation_nameMake(self) -> list:
+        """
+        Generates the species-genome-annotation names collection based on the sample sheet.
+        """
+        roboindex_df = pd.read_csv(os.path.join(settings.BASE_DIR, 'static', 'tables', 'sampleSheet_ROBOINDEX_2023.csv'))
+        # roboindex_df = roboindex_df.sort_values(by='name') # Sort the DataFrame by 'name' column
+        genome_ver_list = [f"{row['name']}; Genome Version: {row['id']}; Annotation: {row['annotation_version']}" for _, row in roboindex_df.iterrows()]
+        return genome_ver_list
     
-    def run_nextflow(self, xls_file_path: Path):
-        log_file = settings.NEXTFLOW_DIR / "log" / f"{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
+    def ID_Csv_maker(self):
+        """
+        Creates a CSV file with the Sample IDs.
+        """
+        df = pd.DataFrame(self.ID_Set, columns=["SampleID"])
         
-        subprocess.run(["nextflow", "run", "/n/ngs/tools/SECUNDO3/Scundo3_v4.2/main.nf", 
-                        "--public_dataxlsx", xls_file_path.resolve(), 
-                        '--lab', self.Lab, '--requester', self.UserID, '--user_email', f"{self.UserID}@stowers.org" ], 
-                       text=True, stdout=log_file, stderr=subprocess.STDOUT)
+        # Define the path for the CSV file
+        now = datetime.now()
+        formated_run_time = now.strftime("%Y-%m-%d_%H-%M-%S")
+        run_folder = settings.CSV_DIR / f"{self.UserID}_{self.Lab}_{formated_run_time}"
+        
+        if not run_folder.exists():
+            run_folder.mkdir(parents=True, exist_ok=True)
 
-    def script_nextflow(self, xls_file_path: Path):
-        log_file = settings.NEXTFLOW_DIR / "log" / f"{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.log"
-        
-        run_cmd = f"nextflow run /n/ngs/tools/SECUNDO3/Scundo3_v4.2/main.nf \
-            --public_dataxlsx {xls_file_path.resolve()} \
-            --lab {self.Lab} --requester {self.UserID} \
-            --user_email {self.UserID}@stowers.org > {log_file.resolve()} 2>&1"
-        
-        script_file = settings.NEXTFLOW_DIR / "script" / f"{self.UserID}_{self.PROJECT_NAME}_{formated_run_time}.nextflow.sh"
-        with open(script_file, 'w') as f:
-            f.write("#!/bin/bash\n")
-            f.write(run_cmd)
-
+        csv_file_path = run_folder / f"{self.UserID}_{self.Lab}_{formated_run_time}_{self.Analysis}+{self.Reference}.csv"
+        # Save the DataFrame to a CSV file
+        df.to_csv(csv_file_path, index=False, header=False)
+        return csv_file_path
