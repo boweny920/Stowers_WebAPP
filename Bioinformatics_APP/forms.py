@@ -21,7 +21,7 @@ class PublicDataForm(forms.Form):
                             widget=forms.Textarea(attrs={'placeholder': 'e.g. by2747', 'rows': 1, 'cols': 15})
                             )
 
-    Analysis = forms.ChoiceField(choices=[('bulk-RNA-Seq', 'bulk-RNA-Seq'), ('Download-Fastqs', 'Download-Fastqs')], # DO NOT include "_" in the choices!
+    Analysis = forms.ChoiceField(choices=[('bulk-RNA-Seq', 'bulk-RNA-Seq'), ('scRNA-Seq-GEX', 'scRNA-Seq-GEX'), ('Download-Fastqs', 'Download-Fastqs'))], # DO NOT include "_" in the choices!
                                 widget=forms.Select(attrs={'placeholder': 'Choose Your Analysis Type', 'rows': 2, 'cols': 25})
                                 )
     
