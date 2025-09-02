@@ -8,7 +8,6 @@ Hawley
 Kostova
 Krumlauf
 Li_L
-Li_R
 Ozel
 Piotrowski
 Rohner
@@ -17,11 +16,9 @@ Sankari
 Sauka-Spengler
 Sequencing
 Si
-Tissue
 Tissue_Culture
 Trainor
 Workman
-Xie
 Yu
 Zanders
 Zeitlinger
